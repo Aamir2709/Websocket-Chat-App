@@ -7,7 +7,8 @@ import {
   Container,
   Paper,
   Divider,
-  IconButton
+  IconButton,
+  Fade,
 } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 
@@ -54,8 +55,33 @@ export default function LiveEditor() {
 
   return (
     <Container maxWidth="md">
-      <Paper elevation={6} sx={{ p: 4, mt: 5, borderRadius: 3, boxShadow: 3 }}>
-        <Typography variant="h4" gutterBottom fontWeight="bold" color="primary">
+      <Paper
+        elevation={8}
+        sx={{
+          p: 4,
+          mt: 5,
+          borderRadius: 4,
+          boxShadow: 12,
+          backgroundColor: '#fff',
+          transition: 'box-shadow 0.3s ease',
+          '&:hover': {
+            boxShadow: '0px 10px 30px rgba(0, 0, 0, 0.1)',
+          },
+        }}
+      >
+        <Typography
+          variant="h3"
+          gutterBottom
+          fontWeight="bold"
+          color="primary"
+          sx={{
+            letterSpacing: '1.2px',
+            transition: 'color 0.3s ease',
+            '&:hover': {
+              color: '#1976d2',
+            },
+          }}
+        >
           Live Note Editor
         </Typography>
 
@@ -65,25 +91,34 @@ export default function LiveEditor() {
             border: '1px solid #e0e0e0',
             borderRadius: 2,
             minHeight: '300px',
-            backgroundColor: '#f5f5f5',
+            backgroundColor: '#f9f9f9',
             mb: 2,
             fontFamily: 'monospace',
             whiteSpace: 'pre-wrap',
             overflowY: 'auto',
+            transition: 'background-color 0.3s ease',
+            '&:hover': {
+              backgroundColor: '#f0f0f0',
+            },
           }}
         >
           {note.map((line, idx) => (
-            <Typography
-              key={idx}
-              sx={{
-                color: line.client_id === clientId.current ? 'blue' : 'green',
-                fontWeight: 'lighter',
-                marginBottom: 1,
-                fontSize: '1rem',
-              }}
-            >
-              [{line.client_id === clientId.current ? 'You' : line.client_id.slice(0, 6)}] {line.content}
-            </Typography>
+            <Fade in={true} key={idx} timeout={500}>
+              <Typography
+                sx={{
+                  color: line.client_id === clientId.current ? 'blue' : 'green',
+                  fontWeight: 'lighter',
+                  marginBottom: 1,
+                  fontSize: '1rem',
+                  opacity: 0.8,
+                  '&:hover': {
+                    opacity: 1,
+                  },
+                }}
+              >
+                [{line.client_id === clientId.current ? 'You' : line.client_id.slice(0, 6)}] {line.content}
+              </Typography>
+            </Fade>
           ))}
         </Box>
 
@@ -95,7 +130,18 @@ export default function LiveEditor() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyPress}
             variant="outlined"
-            sx={{ mr: 1 }}
+            sx={{
+              mr: 1,
+              borderRadius: 2,
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: 'rgba(0, 0, 0, 0.23)',
+                },
+                '&:hover fieldset': {
+                  borderColor: '#1976d2',
+                },
+              },
+            }}
             size="small"
           />
           <IconButton
@@ -107,6 +153,9 @@ export default function LiveEditor() {
               '&:hover': {
                 backgroundColor: input.trim() ? 'primary.dark' : 'grey.400',
               },
+              borderRadius: '50%',
+              p: 1.5,
+              transition: 'background-color 0.2s ease',
             }}
           >
             <SendIcon />
@@ -124,7 +173,13 @@ export default function LiveEditor() {
               key={u}
               label={u === clientId.current ? 'You' : u.slice(0, 6)}
               color={u === clientId.current ? 'primary' : 'default'}
-              sx={{ m: 0.5 }}
+              sx={{
+                m: 0.5,
+                transition: 'transform 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                },
+              }}
             />
           ))}
         </Box>
