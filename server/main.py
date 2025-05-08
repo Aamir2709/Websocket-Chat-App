@@ -2,6 +2,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from uuid import uuid4
 from typing import List
 from fastapi.middleware.cors import CORSMiddleware
+import datetime
 
 app = FastAPI()
 
@@ -49,13 +50,16 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
+            timestamp = datetime.datetime.now().isoformat()
             data = await websocket.receive_json()
             if data["type"] == "update":
                 note_line = {
                     "client_id":manager.client_ids[websocket],
-                    "content": data["note"]
+                    "content": data["note"],
+                    "timestamp":timestamp
                 }
                 manager.current_note.append(note_line)
+                manager.current_note = manager.current_note[-1000:]
                 await manager.broadcast({"type":"update","note":manager.current_note})
     except WebSocketDisconnect:
         manager.disconnect(websocket)
